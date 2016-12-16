@@ -45,6 +45,8 @@ class ConnectedTreeNode extends Component {
 
     const { nodeRenderer } = this.props
 
+    const { stylePaths } = this.props
+
     let childNodes = []
     for(let { name, data, ...props } of dataIterator(parentData)){
       const key = name
@@ -59,6 +61,8 @@ class ConnectedTreeNode extends Component {
                            dataIterator={dataIterator}
                            nodeRenderer={nodeRenderer}
 
+                           stylePaths={stylePaths}
+
                            {...props} // props for nodeRenderer
                            />
       )
@@ -67,11 +71,13 @@ class ConnectedTreeNode extends Component {
   }
 
   render() {
-    const { data, dataIterator, path, depth } = this.props
+    const { data, dataIterator, path, depth, stylePaths } = this.props
 
     const nodeHasChildNodes = hasChildNodes(data, dataIterator)
     const { expandedPaths } = this.state
     const expanded = !!expandedPaths[path]
+
+    const nodeStyles = path && stylePaths && stylePaths[path]
 
     const { nodeRenderer } = this.props
 
@@ -86,6 +92,8 @@ class ConnectedTreeNode extends Component {
 
         // Render a node from name and data (or possibly other props like isNonenumerable)
         nodeRenderer={nodeRenderer}
+
+        pathStyle={nodeStyles ? nodeStyles : {}}
 
         {...this.props}>
 
@@ -107,6 +115,8 @@ ConnectedTreeNode.propTypes = {
   depth: PropTypes.number,
   expanded: PropTypes.bool,
 
+  stylePaths: PropTypes.object,
+
   nodeRenderer: PropTypes.func,
 }
 
@@ -118,6 +128,7 @@ class TreeView extends Component {
   static defaultProps = {
     expandLevel: 0,
     expandPaths: [],
+    stylePaths: {},
   }
 
   constructor(props){
@@ -151,6 +162,7 @@ class TreeView extends Component {
   render() {
     const { name, data, dataIterator } = this.props
     const { nodeRenderer } = this.props
+    const { stylePaths } = this.props
 
     const rootPath = DEFAULT_ROOT_PATH
 
@@ -162,6 +174,8 @@ class TreeView extends Component {
                          depth={0}
                          path={rootPath}
 
+                         stylePaths={stylePaths}
+
                          nodeRenderer={nodeRenderer}
                          />
     )
@@ -172,6 +186,8 @@ TreeView.propTypes = {
   name: PropTypes.string,
   data: PropTypes.any,
   dataIterator: PropTypes.func,
+
+  stylePaths: PropTypes.object,
 
   nodeRenderer: PropTypes.func,
 }
